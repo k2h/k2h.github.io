@@ -1,0 +1,59 @@
+<html>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.6.10/vue.min.js"></script>
+<body>
+    <div id="app">
+        <div id="container">
+            <div id="selectSound">
+            </div>
+            <div id="selectLevel">
+                <select v-on:change="levelSelected">
+                    <option v-for="level in levels" v-bind:value="level.id">{{level.name}}</option>
+                </select>
+            </div>
+            <div id="startButton" v-on:click="startLevel">{{ startButtonText }}
+            </div>
+            <div id="stepsLeft">
+                
+            </div>
+        </div>
+    </div>
+    <script>
+        var app = new Vue({
+            el: "#app",
+            data: {
+                startButtonText: 'START',
+                levels: [
+                    {id:1, name:'1', steps:[2,5,3,8,2,10]},
+                    {id:2, name:'2', steps:[2,1,1,1]}
+                ],
+                availableSounds: [],
+                selectedSound: new Audio('click.mp3'),
+                selectedLevel: {id:1, name:'1', steps:[2,5,3,8,2,10]},
+                pause: false,
+                stepsLeft: 0
+            },
+            methods: {
+                startLevel: function() {
+                    pause = false;
+                    let level = this.selectedLevel;
+                    for(i=0;i<level.steps.length;i++) {
+                        console.log('round: ' + i)
+                        levelsLeft = level.steps.slice(0,i+1);
+                        time = levelsLeft.reduce((a,c) => a+c);                        
+                        setTimeout(() => {
+                            console.log('timeout' + i);
+                            this.selectedSound.currentTime = 0;
+                            this.selectedSound.play();                            
+                        }, time*1000)
+                    }
+                },
+                levelSelected: function(event) {
+                    this.selectedLevel = this.levels.find((e) => {
+                        return e.id == event.target.value;
+                    });
+                }
+            }
+        });
+    </script>
+</body>
+</html>
